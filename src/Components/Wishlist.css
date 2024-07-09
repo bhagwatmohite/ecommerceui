@@ -1,0 +1,58 @@
+.wishlist-container {
+  padding-top: 20px;
+}
+
+.sidebar {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.sidebar h5 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.sidebar-menu {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.submenu {
+  list-style-type: none;
+  padding-left: 15px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.wishlist-item {
+  padding: 20px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.wishlist-item h5 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.wishlist-item p {
+  font-size: 14px;
+  color: #333;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #757575;
+}
+
+.discount {
+  color: #388e3c;
+  font-weight: 500;
+}

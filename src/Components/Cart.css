@@ -1,0 +1,26 @@
+/* Cart.css */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.card-text {
+  font-size: 0.875rem;
+}
+
+.card-body .btn-link {
+  font-size: 0.875rem;
+}
+
+.img-fluid {
+  max-width: 100px;
+}
+
+h6 .price {
+  text-decoration: line-through;
+}
+
+h6 .off-color {
+  color: green;
+  margin-left: 0.5rem;
+}
