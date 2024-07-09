@@ -182,7 +182,7 @@ const ProductCard = ({ product }) => {
   useEffect(() => {
     const fetchCharges = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/all");
+        const response = await axios.get("http://13.201.255.228:8080/all");
         if (response.data.length > 0) {
           const firstCharge = response.data[0];
           setPercentage(firstCharge.percentage);
