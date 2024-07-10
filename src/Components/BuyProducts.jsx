@@ -400,7 +400,7 @@ const BuyProducts = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/product/${productId}`);
+        const response = await fetch(`http://13.201.255.228:8080/product/${productId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }
@@ -417,7 +417,7 @@ const BuyProducts = () => {
   useEffect(() => {
     const fetchCharges = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/all");
+        const response = await axios.get("http://13.201.255.228:8080/all");
         if (response.data.length > 0) {
           const firstCharge = response.data[0];
           setPercentage(firstCharge.percentage);
@@ -489,7 +489,7 @@ const BuyProducts = () => {
       // Replace with logic to get the logged-in user's ID
       const userId = id; // Replace with actual logged-in user ID retrieval
 
-      const response = await axios.post(`http://localhost:8080/save/${userId}`, newAddress);
+      const response = await axios.post(`http://13.201.255.228:8080/save/${userId}`, newAddress);
       // Assuming the API responds with the added address object
       const addedAddress = response.data;
       // You would typically update the state with the added address
@@ -605,7 +605,7 @@ const BuyProducts = () => {
                     <Card.Body>
                       <Row>
                         <Col md={2}>
-                          <img src={`http://localhost:8080/uploads/${product.imageUrl}`} alt={product.name} className="img-fluid" />
+                          <img src={`http://13.201.255.228:8080/uploads/${product.imageUrl}`} alt={product.name} className="img-fluid" />
                         </Col>
                         <Col md={8}>
                           <Card.Title>{product.name}</Card.Title>

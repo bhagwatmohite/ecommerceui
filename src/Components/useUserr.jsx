@@ -22,7 +22,7 @@ const useUserr = () => {
     // Fetch all user data from the API
     const fetchUserrData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/userr');
+        const response = await fetch('http://13.201.255.228:8080/userr');
         const data = await response.json();
 
         // Find the user whose email matches the stored email

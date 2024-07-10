@@ -19,7 +19,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/user/${userrDetails.id}/productIds`);
+        const response = await axios.get(`http://13.201.255.228:8080/user/${userrDetails.id}/productIds`);
         if (response.data) {
           setProductIds(response.data);
         } else {
@@ -38,7 +38,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
       setLoadingProducts(true); // Set loading state to true
       const promises = productIds.map(async (productId) => {
         try {
-          const response = await axios.get(`http://localhost:8080/product/${productId}`);
+          const response = await axios.get(`http://13.201.255.228:8080/product/${productId}`);
           return { ...response.data, quantity: 1 };
         } catch (error) {
           console.error(`Error fetching product ${productId}:`, error);
@@ -62,7 +62,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
   useEffect(() => {
     const fetchCharges = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/all");
+        const response = await axios.get("http://13.201.255.228:8080/all");
         if (response.data.length > 0) {
           const firstCharge = response.data[0];
           setPercentage(firstCharge.percentage);
@@ -83,7 +83,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
 
   const handleRemoveItem = async (productId) => {
     try {
-      const response = await axios.get('http://localhost:8080/getallcart');
+      const response = await axios.get('http://13.201.255.228:8080/getallcart');
       const cartItem = response.data.find(item => item.productId === productId && item.userrId === userrDetails.id);
 
       if (!cartItem) {
@@ -92,7 +92,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
       }
 
       const cartItemId = cartItem.id;
-      await axios.delete(`http://localhost:8080/deletecart/${cartItemId}`);
+      await axios.delete(`http://13.201.255.228:8080/deletecart/${cartItemId}`);
       setCartItems(prevCartItems => prevCartItems.filter(item => item.id !== productId));
       console.log(`Item with productId ${productId} removed from cart.`);
     } catch (error) {
@@ -158,7 +158,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
                 <Card.Body>
                   <Row>
                     <Col md={2}>
-                      <img src={`http://localhost:8080/uploads/${item.imageUrl}`} alt={item.name} className="img-fluid" />
+                      <img src={`http://13.201.255.228:8080/uploads/${item.imageUrl}`} alt={item.name} className="img-fluid" />
                     </Col>
                     <Col md={8}>
                       <Card.Title>{item.name}</Card.Title>

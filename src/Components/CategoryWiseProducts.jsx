@@ -74,7 +74,7 @@ const CategoryWiseProducts = () => {
     const fetchData = async () => {
       try {
         // Fetch products
-        const response = await axios.get(`http://localhost:8080/category/${categoryId}`);
+        const response = await axios.get(`http://13.201.255.228:8080/category/${categoryId}`);
         const fetchedProducts = response.data.products;
         setProducts(fetchedProducts);
         setFilteredProducts(fetchedProducts);
@@ -105,7 +105,7 @@ const CategoryWiseProducts = () => {
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/subcategory/bycategory/${categoryId}`);
+        const response = await axios.get(`http://13.201.255.228:8080/subcategory/bycategory/${categoryId}`);
         setSubcategories(response.data);
 
       } catch (error) {

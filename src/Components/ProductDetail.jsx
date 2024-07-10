@@ -23,7 +23,7 @@ const ProductDetail = ({ setCartItems }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/product/${id}`);
+        const response = await fetch(`http://13.201.255.228:8080/product/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }
@@ -40,7 +40,7 @@ const ProductDetail = ({ setCartItems }) => {
   useEffect(() => {
     const fetchCharges = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/all");
+        const response = await axios.get("http://13.201.255.228:8080/all");
         console.log("get charges ", response.data);
         if (response.data.length > 0) {
           const firstCharge = response.data[0]; // Assuming you only need the first item from the array
@@ -64,7 +64,7 @@ const ProductDetail = ({ setCartItems }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:8080/addcartitem', {
+      const response = await fetch('http://13.201.255.228:8080/addcartitem', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ const ProductDetail = ({ setCartItems }) => {
         <Row>
           <Col md={6} className="overflow-hidden">
             <div className="left-div" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: '100px' }}>
-              <img src={`http://localhost:8080/uploads/${product.imageUrl}`} alt={product.name} style={{ width: '416px', height: '416px' }} className="img-fluid" />
+              <img src={`http://13.201.255.228:8080/uploads/${product.imageUrl}`} alt={product.name} style={{ width: '416px', height: '416px' }} className="img-fluid" />
               <div className='button-div' style={{ paddingTop: '20px' }}>
                 <Button
                   style={{ height: 'clamp(60px, 8vh, 80px)', width: 'clamp(200px, 40vw, 150px)', borderRadius: '5px', cursor: 'pointer', marginRight: '10px', border: '1px solid #E05D00', color: '#E05D00', backgroundColor: 'white' }}

@@ -62,7 +62,7 @@ const Register = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await axios.post('http://localhost:8080/registeruserr', formData);
+        const response = await axios.post('http://13.201.255.228:8080/registeruserr', formData);
         console.log('User registered successfully:', response.data);
         alert("Register Successfully...");
         navigate('/login');

@@ -13,7 +13,7 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:8080/userr/login', {
+      const response = await fetch('http://13.201.255.228:8080/userr/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

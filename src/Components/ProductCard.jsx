@@ -202,7 +202,7 @@ const ProductCard = ({ product }) => {
   const handleWishlistClick = async () => {
     try {
       // API call to add the product to the wishlist
-      await axios.post(`http://localhost:8080/addwishlist`, {
+      await axios.post(`http://13.201.255.228:8080/addwishlist`, {
         userrId: userrDetails.id,
         productId: product.id
       });
@@ -287,7 +287,7 @@ const ProductCard = ({ product }) => {
       <div style={imageContainerStyles} onClick={handleCardClick}>
         <Card.Img
           variant="top"
-          src={`http://localhost:8080/uploads/${product.imageUrl}`}
+          src={`http://13.201.255.228:8080/uploads/${product.imageUrl}`}
           alt={product.name}
           style={imageStyles}
         />

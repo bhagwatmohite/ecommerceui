@@ -72,7 +72,7 @@ const PersonalInformation = ({ userData }) => {
     // If form is valid, proceed with save/update
     if (formIsValid) {
       try {
-        const response = await axios.put(`http://localhost:8080/userr/${userData.id}`, editableUserData);
+        const response = await axios.put(`http://13.201.255.228:8080/userr/${userData.id}`, editableUserData);
         console.log('Profile updated successfully:', response.data);
         alert("Profile updated successfully");
         // Optionally, you can show a success message or update UI state upon successful update

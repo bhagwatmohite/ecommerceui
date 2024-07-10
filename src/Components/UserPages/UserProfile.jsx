@@ -18,7 +18,7 @@ const UserProfile = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/userr/${id}`);
+      const response = await fetch(`http://13.201.255.228:8080/userr/${id}`);
       if (response.ok) {
         const userData = await response.json();
         setUserData(userData);

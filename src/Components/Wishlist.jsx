@@ -14,13 +14,13 @@ const Wishlist = () => {
         if (!userrDetails) return; // Ensure userrDetails is available
 
         // Fetch wishlist items from the API using userrDetails.id
-        const response = await fetch(`http://localhost:8080/wishlist/user/${userrDetails.id}/productIds`);
+        const response = await fetch(`http://13.201.255.228:8080/wishlist/user/${userrDetails.id}/productIds`);
         if (response.ok) {
           const productIds = await response.json();
 
           // Fetch details of each product in the wishlist
           const promises = productIds.map(productId =>
-            fetch(`http://localhost:8080/product/${productId}`)
+            fetch(`http://13.201.255.228:8080/product/${productId}`)
               .then(response => response.json())
           );
 
@@ -40,7 +40,7 @@ const Wishlist = () => {
   const handleRemoveFromWishlist = async (itemId) => {
     try {
       // Remove item from wishlist API call
-      const response = await fetch(`http://localhost:8080/wishlist/${itemId}`, { method: 'DELETE' });
+      const response = await fetch(`http://13.201.255.228:8080/wishlist/${itemId}`, { method: 'DELETE' });
       if (response.ok) {
         // Update the wishlist items after removing
         setWishlistItems(wishlistItems.filter(item => item.id !== itemId));
@@ -110,7 +110,7 @@ const Wishlist = () => {
               <Card.Body>
                 <Row>
                   <Col md={2}>
-                    <Image src={`http://localhost:8080/uploads/${item.imageUrl}`} alt={item.name} className="img-fluid" />
+                    <Image src={`http://13.201.255.228:8080/uploads/${item.imageUrl}`} alt={item.name} className="img-fluid" />
                   </Col>
                   <Col md={8}>
                     <Card.Title>{item.name}</Card.Title>
