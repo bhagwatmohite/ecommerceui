@@ -1,3 +1,464 @@
+// /* eslint-disable react-hooks/exhaustive-deps */
+// /* eslint-disable react/prop-types */
+// import axios from 'axios';
+// import { useEffect, useState } from 'react';
+// import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+// import { useNavigate } from 'react-router-dom';
+// import useUserr from './useUserr';
+
+// const Cart = ({ onUpdateCartQuantity }) => {
+//   const { userrDetails } = useUserr();
+//   const [productIds, setProductIds] = useState([]);
+//   const [cartItems, setCartItems] = useState([]);
+//   const [totalQuantity, setTotalQuantity] = useState(0);
+//   const [percentage, setPercentage] = useState(0);
+//   const [loadingProducts, setLoadingProducts] = useState(false); // State to track loading state
+//   const navigate = useNavigate();
+
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const response = await axios.get(`http://localhost:8080/user/${userrDetails.id}/productIds`);
+//         if (response.data) {
+//           setProductIds(response.data);
+//         } else {
+//           setProductIds([]); // Set empty array if response.data is null or undefined
+//         }
+//       } catch (error) {
+//         console.error("Error fetching product IDs:", error);
+//       }
+//     };
+
+//     fetchData();
+//   }, [userrDetails]);
+
+//   useEffect(() => {
+//     const fetchProductDetails = async () => {
+//       setLoadingProducts(true); // Set loading state to true
+//       const promises = productIds.map(async (productId) => {
+//         try {
+//           const response = await axios.get(`http://localhost:8080/product/${productId}`);
+//           return { ...response.data, quantity: 1 };
+//         } catch (error) {
+//           console.error(`Error fetching product ${productId}:`, error);
+//           return null;
+//         }
+//       });
+
+
+//       const products = await Promise.all(promises);
+//       const filteredProducts = products.filter(product => product !== null);
+//       setCartItems(filteredProducts);
+//       setLoadingProducts(false); // Set loading state to false after fetching data
+//     };
+
+//     if (productIds.length > 0) {
+//       fetchProductDetails();
+//     } else {
+//       setCartItems([]); // Set cart items to empty array if productIds is empty
+//     }
+//   }, [productIds]);
+
+//   useEffect(() => {
+//     const fetchCharges = async () => {
+//       try {
+//         const response = await axios.get("http://localhost:8080/all");
+//         if (response.data.length > 0) {
+//           const firstCharge = response.data[0];
+//           setPercentage(firstCharge.percentage);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching charges:', error);
+//       }
+//     };
+
+//     fetchCharges();
+//   }, []);
+
+//   useEffect(() => {
+//     const total = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+//     setTotalQuantity(total);
+//     onUpdateCartQuantity(total);
+//   }, [cartItems, onUpdateCartQuantity]);
+
+//   const handleRemoveItem = async (productId) => {
+//     try {
+//       const response = await axios.get('http://localhost:8080/getallcart');
+//       const cartItem = response.data.find(item => item.productId === productId && item.userrId === userrDetails.id);
+
+//       if (!cartItem) {
+//         console.error(`Cart item with productId ${productId} not found for user ${userrDetails.id}.`);
+//         return;
+//       }
+
+//       const cartItemId = cartItem.id;
+//       await axios.delete(`http://localhost:8080/deletecart/${cartItemId}`);
+//       setCartItems(prevCartItems => prevCartItems.filter(item => item.id !== productId));
+//       console.log(`Item with productId ${productId} removed from cart.`);
+//     } catch (error) {
+//       console.error(`Error removing item with productId ${productId} from cart:`, error);
+//     }
+//   };
+
+//   // useEffect(() => {
+//   //   handleRemoveItem();
+//   // }, [userrDetails.id])
+
+//   const handleSaveForLater = (itemId) => {
+//     console.log(`Saving item with ID ${itemId} for later`);
+//   };
+
+//   const handleIncreaseQuantity = (itemId) => {
+//     const updatedItems = cartItems.map(item => {
+//       if (item.id === itemId) {
+//         return { ...item, quantity: item.quantity + 1 };
+//       }
+//       return item;
+//     });
+//     setCartItems(updatedItems);
+//   };
+
+//   const handleDecreaseQuantity = (itemId) => {
+//     const updatedItems = cartItems.map(item => {
+//       if (item.id === itemId && item.quantity > 1) {
+//         return { ...item, quantity: item.quantity - 1 };
+//       }
+//       return item;
+//     });
+//     setCartItems(updatedItems);
+//   };
+
+//   const handlePlaceOrder = () => {
+//     const productIdsToBuy = cartItems.map(item => item.id);
+//     navigate('/buyproducts', { state: { productId: productIdsToBuy } });
+//     console.log('Placing order', productIdsToBuy);
+//   };
+
+//   const calculateNewSellPrice = (sellprice) => {
+//     if (!isNaN(parseFloat(percentage))) {
+//       const newPrice = parseFloat(sellprice) * (1 + parseFloat(percentage) / 100);
+//       return newPrice.toFixed(2); // Limit to 2 decimal places
+//     }
+//     return sellprice;
+//   };
+
+//   const calculateDiscount = (originalPrice, discountedPrice) => {
+//     const discount = ((originalPrice - discountedPrice) / originalPrice) * 100;
+//     return discount.toFixed(0); // Return the discount percentage rounded to the nearest integer
+//   };
+
+//   const totalPrice = cartItems.reduce((total, item) => total + parseFloat(calculateNewSellPrice(item.sellprice)) * item.quantity, 0);
+//   const totalDiscount = cartItems.reduce((total, item) => total + (item.price - parseFloat(calculateNewSellPrice(item.sellprice))) * item.quantity, 0);
+
+
+//   return (
+//     <Container className="mt-4">
+//       <Row>
+//         <Col md={8} style={{ marginTop: '150px' }}>
+//           {loadingProducts ? (
+//             <p>Loading...</p>
+//           ) : (
+//             cartItems.map(item => (
+//               <Card key={item.id} className="mb-3">
+//                 <Card.Body>
+//                   <Row>
+//                     <Col md={2}>
+//                       <img src={`http://localhost:8080/ColorImages/${item.imageUrl}`} alt={item.name} className="img-fluid" />
+//                     </Col>
+//                     <Col md={8}>
+//                       <Card.Title>{item.name}</Card.Title>
+//                       <Card.Text className="text-muted">
+//                         Brand: {item.brandname}
+//                       </Card.Text>
+//                       <Card.Text>
+//                         <span className="fw-bold">₹{calculateNewSellPrice(item.sellprice)}</span>
+//                         <span className="text-muted ms-2 text-decoration-line-through">₹{item.price}</span>
+//                         <span className="text-success ms-2">{calculateDiscount(item.price, calculateNewSellPrice(item.sellprice))}% Off</span>
+//                       </Card.Text>
+//                       <div className="d-flex align-items-center">
+//                         <Button variant="outline-secondary" size="sm" onClick={() => handleDecreaseQuantity(item.id)}>-</Button>
+//                         <span className="mx-2">{item.quantity}</span>
+//                         <Button variant="outline-secondary" size="sm" onClick={() => handleIncreaseQuantity(item.id)}>+</Button>
+//                       </div>
+//                     </Col>
+//                     <Col md={2} className="d-flex flex-column justify-content-between align-items-end">
+//                       <Button variant="link" className="p-0 mb-2" onClick={() => handleSaveForLater(item.id)}></Button>
+//                       <Button variant="link" className="p-0 text-danger text-decoration-none" onClick={() => handleRemoveItem(item.id)}>Remove</Button>
+//                     </Col>
+//                   </Row>
+//                 </Card.Body>
+//               </Card>
+//             ))
+//           )}
+//         </Col>
+//         <Col md={4} style={{ marginTop: '100px', marginBottom: '50px' }}>
+//           <Card className="p-3">
+//             <Card.Body>
+//               <Card.Title className="mb-3">PRICE DETAILS</Card.Title>
+//               <div className="d-flex justify-content-between mb-2">
+//                 <span>Price ({totalQuantity} items)</span>
+//                 <span>₹{totalPrice.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+//               </div>
+//               <div className="d-flex justify-content-between mb-2">
+//                 <span>Discount</span>
+//                 <span className="text-success"> ₹{totalDiscount.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+//               </div>
+//               <div className="d-flex justify-content-between mb-2">
+//                 <span>Delivery Charges</span>
+//                 <span className="text-success">Free</span>
+//               </div>
+//               <div className="d-flex justify-content-between fw-bold mb-3">
+//                 <span>Total Amount</span>
+//                 <span>₹{totalPrice.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+//               </div>
+//               <div className="text-success">
+//                 You will save ₹{totalDiscount.toFixed(2)} on this order
+//               </div>
+//             </Card.Body>
+//           </Card>
+//           <Button variant="warning" className="w-100 mt-3" onClick={handlePlaceOrder}>PLACE ORDER</Button>
+//         </Col>
+//       </Row>
+//     </Container>
+//   );
+// };
+
+// export default Cart;
+
+
+//after changinng show shows images 
+
+
+
+// /* eslint-disable react-hooks/exhaustive-deps */
+// /* eslint-disable react/prop-types */
+// import axios from 'axios';
+// import { useEffect, useState } from 'react';
+// import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+// import { useNavigate } from 'react-router-dom';
+// import useUserr from './useUserr';
+
+// const Cart = ({ onUpdateCartQuantity }) => {
+//   const { userrDetails } = useUserr();
+//   const [productIds, setProductIds] = useState([]);
+//   const [cartItems, setCartItems] = useState([]);
+//   const [totalQuantity, setTotalQuantity] = useState(0);
+//   const [percentage, setPercentage] = useState(0);
+//   const [loadingProducts, setLoadingProducts] = useState(false); // State to track loading state
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const response = await axios.get(`http://localhost:8080/user/${userrDetails.id}/productIds`);
+//         setProductIds(response.data || []); // Set empty array if response.data is null or undefined
+//       } catch (error) {
+//         console.error("Error fetching product IDs:", error);
+//       }
+//     };
+
+//     fetchData();
+//   }, [userrDetails]);
+
+//   useEffect(() => {
+//     const fetchProductDetails = async () => {
+//       setLoadingProducts(true); // Set loading state to true
+//       const promises = productIds.map(async (productId) => {
+//         try {
+//           const response = await axios.get(`http://localhost:8080/product/${productId}`);
+//           console.log("data", response.data)
+//           const firstImage = response.data.sizes?.[0]?.colors?.[0]?.images?.[0] || '';
+//           return { ...response.data, quantity: 1, firstImage }; // Add firstImage to the product object
+
+//         } catch (error) {
+//           console.error(`Error fetching product ${productId}:`, error);
+//           return null;
+//         }
+//       });
+
+//       const products = await Promise.all(promises);
+//       const filteredProducts = products.filter(product => product !== null);
+//       setCartItems(filteredProducts);
+//       setLoadingProducts(false); // Set loading state to false after fetching data
+//     };
+
+//     if (productIds.length > 0) {
+//       fetchProductDetails();
+//     } else {
+//       setCartItems([]); // Set cart items to empty array if productIds is empty
+//     }
+//   }, [productIds]);
+
+//   useEffect(() => {
+//     const fetchCharges = async () => {
+//       try {
+//         const response = await axios.get("http://localhost:8080/all");
+//         if (response.data.length > 0) {
+//           const firstCharge = response.data[0];
+//           setPercentage(firstCharge.percentage);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching charges:', error);
+//       }
+//     };
+
+//     fetchCharges();
+//   }, []);
+
+//   useEffect(() => {
+//     const total = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+//     setTotalQuantity(total);
+//     onUpdateCartQuantity(total);
+//   }, [cartItems, onUpdateCartQuantity]);
+
+//   const handleRemoveItem = async (productId) => {
+//     try {
+//       const response = await axios.get('http://localhost:8080/getallcart');
+//       const cartItem = response.data.find(item => item.productId === productId && item.userrId === userrDetails.id);
+
+//       if (!cartItem) {
+//         console.error(`Cart item with productId ${productId} not found for user ${userrDetails.id}.`);
+//         return;
+//       }
+
+//       const cartItemId = cartItem.id;
+//       await axios.delete(`http://localhost:8080/deletecart/${cartItemId}`);
+//       setCartItems(prevCartItems => prevCartItems.filter(item => item.id !== productId));
+//       console.log(`Item with productId ${productId} removed from cart.`);
+//     } catch (error) {
+//       console.error(`Error removing item with productId ${productId} from cart:`, error);
+//     }
+//   };
+
+//   const handleSaveForLater = (itemId) => {
+//     console.log(`Saving item with ID ${itemId} for later`);
+//   };
+
+//   const handleIncreaseQuantity = (itemId) => {
+//     const updatedItems = cartItems.map(item => {
+//       if (item.id === itemId) {
+//         return { ...item, quantity: item.quantity + 1 };
+//       }
+//       return item;
+//     });
+//     setCartItems(updatedItems);
+//   };
+
+//   const handleDecreaseQuantity = (itemId) => {
+//     const updatedItems = cartItems.map(item => {
+//       if (item.id === itemId && item.quantity > 1) {
+//         return { ...item, quantity: item.quantity - 1 };
+//       }
+//       return item;
+//     });
+//     setCartItems(updatedItems);
+//   };
+
+//   const handlePlaceOrder = () => {
+//     const productIdsToBuy = cartItems.map(item => item.id);
+//     const images = cartItems.map(item => item.firstImage);
+//     navigate('/buyproducts', { state: { productId: productIdsToBuy, images: images } });
+//     console.log('Placing order', productIdsToBuy);
+//   };
+
+//   const calculateNewSellPrice = (sellprice) => {
+//     if (!isNaN(parseFloat(percentage))) {
+//       const newPrice = parseFloat(sellprice) * (1 + parseFloat(percentage) / 100);
+//       return newPrice.toFixed(2); // Limit to 2 decimal places
+//     }
+//     return sellprice;
+//   };
+
+//   const calculateDiscount = (originalPrice, discountedPrice) => {
+//     const discount = ((originalPrice - discountedPrice) / originalPrice) * 100;
+//     return discount.toFixed(0); // Return the discount percentage rounded to the nearest integer
+//   };
+
+//   const totalPrice = cartItems.reduce((total, item) => total + parseFloat(calculateNewSellPrice(item.sellprice)) * item.quantity, 0);
+//   //  const totalDiscount = cartItems.reduce((total, item) => total + (item.price - parseFloat(calculateNewSellPrice(item.sellprice))) * item.quantity, 0);
+
+//   const totalDiscount = cartItems.reduce((total, item) => total + (item.price - parseFloat(calculateNewSellPrice(item.sellprice))) * item.quantity, 0);
+
+//   return (
+//     <Container className="mt-4">
+//       <Row>
+//         <Col md={8} style={{ marginTop: '150px' }}>
+//           {loadingProducts ? (
+//             <p>Loading...</p>
+//           ) : (
+//             cartItems.map(item => (
+//               <Card key={item.id} className="mb-3">
+//                 <Card.Body>
+//                   <Row>
+//                     <Col md={2}>
+//                       <img src={`http://localhost:8080/ColorImages/${item.firstImage}`} alt={item.name} className="img-fluid" />
+//                     </Col>
+//                     <Col md={8}>
+//                       <Card.Title>{item.name}</Card.Title>
+//                       <Card.Text className="text-muted">
+//                         Brand: {item.brandname}
+//                       </Card.Text>
+//                       <Card.Text>
+//                         <span className="fw-bold">₹{(parseFloat(calculateNewSellPrice(item.sellprice)) * item.quantity).toFixed(2)}</span>
+//                         <span className="text-muted ms-2 text-decoration-line-through">₹{item.price}</span>
+//                         <span className="text-success ms-2">{calculateDiscount(item.price, calculateNewSellPrice(item.sellprice))}% Off</span>
+//                       </Card.Text>
+//                       <div className="d-flex align-items-center">
+//                         <Button variant="outline-secondary" size="sm" onClick={() => handleDecreaseQuantity(item.id)}>-</Button>
+//                         <span className="mx-2">{item.quantity}</span>
+//                         <Button variant="outline-secondary" size="sm" onClick={() => handleIncreaseQuantity(item.id)}>+</Button>
+//                       </div>
+//                     </Col>
+//                     <Col md={2} className="d-flex flex-column justify-content-between align-items-end">
+//                       <Button variant="link" className="p-0 mb-2" onClick={() => handleSaveForLater(item.id)}></Button>
+//                       <Button variant="link" className="p-0 text-danger text-decoration-none" onClick={() => handleRemoveItem(item.id)}>Remove</Button>
+//                     </Col>
+//                   </Row>
+//                 </Card.Body>
+//               </Card>
+//             ))
+//           )}
+//         </Col>
+//         <Col md={4} style={{ marginTop: '100px', marginBottom: '50px' }}>
+//           <Card className="p-3">
+//             <Card.Body>
+//               <Card.Title className="mb-3">PRICE DETAILS</Card.Title>
+//               <div className="d-flex justify-content-between mb-2">
+//                 <span>Price ({totalQuantity} items)</span>
+//                 <span>₹{totalPrice.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+//               </div>
+//               <div className="d-flex justify-content-between mb-2">
+//                 <span>Discount</span>
+//                 <span className="text-success"> ₹{totalDiscount.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+//               </div>
+//               <div className="d-flex justify-content-between mb-2">
+//                 <span>Delivery Charges</span>
+//                 <span className="text-success">Free</span>
+//               </div>
+//               <div className="d-flex justify-content-between fw-bold mb-3">
+//                 <span>Total Amount</span>
+//                 <span>₹{totalPrice.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+//               </div>
+//               <div className="text-success">
+//                 You will save ₹{totalDiscount.toFixed(2)} on this order
+//               </div>
+//               <div className="mt-3 d-grid">
+//                 <Button variant="warning" className="w-100 mt-3" onClick={handlePlaceOrder}>Place Order</Button>
+//               </div>
+//             </Card.Body>
+//           </Card>
+//         </Col>
+//       </Row>
+//     </Container>
+//   );
+// };
+
+// export default Cart;
+
+
+//22.10
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -11,20 +472,14 @@ const Cart = ({ onUpdateCartQuantity }) => {
   const [cartItems, setCartItems] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [percentage, setPercentage] = useState(0);
-  const [loadingProducts, setLoadingProducts] = useState(false); // State to track loading state
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const navigate = useNavigate();
 
-
   useEffect(() => {
-
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://13.201.255.228:8080/user/${userrDetails.id}/productIds`);
-        if (response.data) {
-          setProductIds(response.data);
-        } else {
-          setProductIds([]); // Set empty array if response.data is null or undefined
-        }
+        const response = await axios.get(`http://localhost:8080/user/${userrDetails.id}/productIds`);
+        setProductIds(response.data || []);
       } catch (error) {
         console.error("Error fetching product IDs:", error);
       }
@@ -35,11 +490,24 @@ const Cart = ({ onUpdateCartQuantity }) => {
 
   useEffect(() => {
     const fetchProductDetails = async () => {
-      setLoadingProducts(true); // Set loading state to true
+      setLoadingProducts(true);
       const promises = productIds.map(async (productId) => {
         try {
-          const response = await axios.get(`http://13.201.255.228:8080/product/${productId}`);
-          return { ...response.data, quantity: 1 };
+          const response = await axios.get(`http://localhost:8080/product/${productId}`);
+
+          // Destructuring the first available size and color
+          const firstSize = response.data.sizes?.[0] || {};
+          const firstColor = firstSize.colors?.[0] || {};
+          const firstImage = firstColor.images?.[0] || '';
+          const colorName = firstColor.color || '';
+
+          return {
+            ...response.data,
+            quantity: 1,
+            size: firstSize.size || '',
+            color: colorName,
+            firstImage
+          };
         } catch (error) {
           console.error(`Error fetching product ${productId}:`, error);
           return null;
@@ -49,20 +517,20 @@ const Cart = ({ onUpdateCartQuantity }) => {
       const products = await Promise.all(promises);
       const filteredProducts = products.filter(product => product !== null);
       setCartItems(filteredProducts);
-      setLoadingProducts(false); // Set loading state to false after fetching data
+      setLoadingProducts(false);
     };
 
     if (productIds.length > 0) {
       fetchProductDetails();
     } else {
-      setCartItems([]); // Set cart items to empty array if productIds is empty
+      setCartItems([]);
     }
   }, [productIds]);
 
   useEffect(() => {
     const fetchCharges = async () => {
       try {
-        const response = await axios.get("http://13.201.255.228:8080/all");
+        const response = await axios.get("http://localhost:8080/all");
         if (response.data.length > 0) {
           const firstCharge = response.data[0];
           setPercentage(firstCharge.percentage);
@@ -83,7 +551,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
 
   const handleRemoveItem = async (productId) => {
     try {
-      const response = await axios.get('http://13.201.255.228:8080/getallcart');
+      const response = await axios.get('http://localhost:8080/getallcart');
       const cartItem = response.data.find(item => item.productId === productId && item.userrId === userrDetails.id);
 
       if (!cartItem) {
@@ -92,7 +560,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
       }
 
       const cartItemId = cartItem.id;
-      await axios.delete(`http://13.201.255.228:8080/deletecart/${cartItemId}`);
+      await axios.delete(`http://localhost:8080/deletecart/${cartItemId}`);
       setCartItems(prevCartItems => prevCartItems.filter(item => item.id !== productId));
       console.log(`Item with productId ${productId} removed from cart.`);
     } catch (error) {
@@ -100,9 +568,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
     }
   };
 
-  const handleSaveForLater = (itemId) => {
-    console.log(`Saving item with ID ${itemId} for later`);
-  };
+
 
   const handleIncreaseQuantity = (itemId) => {
     const updatedItems = cartItems.map(item => {
@@ -126,39 +592,45 @@ const Cart = ({ onUpdateCartQuantity }) => {
 
   const handlePlaceOrder = () => {
     const productIdsToBuy = cartItems.map(item => item.id);
-    navigate('/buyproducts', { state: { productId: productIdsToBuy } });
+    const images = cartItems.map(item => item.firstImage);
+    const sizes = cartItems.map(item => item.size);
+    const colors = cartItems.map(item => item.color);
+    const prices = cartItems.map(item => parseFloat(calculateNewSellPrice(item.sellprice)) * item.quantity); // Get total prices for each item
+    const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+    navigate('/buyproducts', { state: { productId: productIdsToBuy, images: images, size: sizes, color: colors, prices: prices, totalQuantity } });
     console.log('Placing order', productIdsToBuy);
   };
 
   const calculateNewSellPrice = (sellprice) => {
     if (!isNaN(parseFloat(percentage))) {
       const newPrice = parseFloat(sellprice) * (1 + parseFloat(percentage) / 100);
-      return newPrice.toFixed(2); // Limit to 2 decimal places
+      return newPrice.toFixed(2);
     }
     return sellprice;
   };
 
   const calculateDiscount = (originalPrice, discountedPrice) => {
     const discount = ((originalPrice - discountedPrice) / originalPrice) * 100;
-    return discount.toFixed(0); // Return the discount percentage rounded to the nearest integer
+    return discount.toFixed(0);
   };
 
   const totalPrice = cartItems.reduce((total, item) => total + parseFloat(calculateNewSellPrice(item.sellprice)) * item.quantity, 0);
   const totalDiscount = cartItems.reduce((total, item) => total + (item.price - parseFloat(calculateNewSellPrice(item.sellprice))) * item.quantity, 0);
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4" >
       <Row>
         <Col md={8} style={{ marginTop: '150px' }}>
           {loadingProducts ? (
             <p>Loading...</p>
           ) : (
             cartItems.map(item => (
-              <Card key={item.id} className="mb-3">
-                <Card.Body>
-                  <Row>
+              <Card key={item.id} className="mb-3" >
+                <Card.Body >
+                  <Row >
                     <Col md={2}>
-                      <img src={`http://13.201.255.228:8080/uploads/${item.imageUrl}`} alt={item.name} className="img-fluid" />
+                      <img src={`http://localhost:8080/ColorImages/${item.firstImage}`} alt={item.name} className="img-fluid" />
                     </Col>
                     <Col md={8}>
                       <Card.Title>{item.name}</Card.Title>
@@ -166,7 +638,10 @@ const Cart = ({ onUpdateCartQuantity }) => {
                         Brand: {item.brandname}
                       </Card.Text>
                       <Card.Text>
-                        <span className="fw-bold">₹{calculateNewSellPrice(item.sellprice)}</span>
+                        <span>Size: {item.size}</span>, <span>Color: {item.color}</span>
+                      </Card.Text>
+                      <Card.Text>
+                        <span className="fw-bold">₹{(parseFloat(calculateNewSellPrice(item.sellprice)) * item.quantity).toFixed(2)}</span>
                         <span className="text-muted ms-2 text-decoration-line-through">₹{item.price}</span>
                         <span className="text-success ms-2">{calculateDiscount(item.price, calculateNewSellPrice(item.sellprice))}% Off</span>
                       </Card.Text>
@@ -177,7 +652,7 @@ const Cart = ({ onUpdateCartQuantity }) => {
                       </div>
                     </Col>
                     <Col md={2} className="d-flex flex-column justify-content-between align-items-end">
-                      <Button variant="link" className="p-0 mb-2" onClick={() => handleSaveForLater(item.id)}></Button>
+
                       <Button variant="link" className="p-0 text-danger text-decoration-none" onClick={() => handleRemoveItem(item.id)}>Remove</Button>
                     </Col>
                   </Row>
@@ -192,26 +667,24 @@ const Cart = ({ onUpdateCartQuantity }) => {
               <Card.Title className="mb-3">PRICE DETAILS</Card.Title>
               <div className="d-flex justify-content-between mb-2">
                 <span>Price ({totalQuantity} items)</span>
-                <span>₹{totalPrice.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+                <span>₹{totalPrice.toFixed(2)}</span>
               </div>
               <div className="d-flex justify-content-between mb-2">
                 <span>Discount</span>
-                <span className="text-success"> ₹{totalDiscount.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+                <span className="text-success">-₹{totalDiscount.toFixed(2)}</span>
               </div>
               <div className="d-flex justify-content-between mb-2">
                 <span>Delivery Charges</span>
                 <span className="text-success">Free</span>
               </div>
-              <div className="d-flex justify-content-between fw-bold mb-3">
+              <hr />
+              <div className="d-flex justify-content-between fw-bold">
                 <span>Total Amount</span>
-                <span>₹{totalPrice.toFixed(2)}</span> {/* Limit to 2 decimal places */}
+                <span>₹{(totalPrice - totalDiscount + (totalPrice * 0.18)).toFixed(2)}</span> {/* Total amount after discount and GST */}
               </div>
-              <div className="text-success">
-                You will save ₹{totalDiscount.toFixed(2)} on this order
-              </div>
+              <Button variant="primary" className="mt-3" onClick={handlePlaceOrder}>Place Order</Button>
             </Card.Body>
           </Card>
-          <Button variant="warning" className="w-100 mt-3" onClick={handlePlaceOrder}>PLACE ORDER</Button>
         </Col>
       </Row>
     </Container>

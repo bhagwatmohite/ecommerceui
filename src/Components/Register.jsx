@@ -17,20 +17,43 @@ const Register = () => {
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false); // State to track password visibility
+  const [nameError, setNameError] = useState({ fname: '', lname: '' }); // State for name validation errors
   const navigate = useNavigate();
 
+  // General change handler for input fields
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: '' });
+    if (name === 'fname') handleNameChange(e, 'fname');
+    if (name === 'lname') handleNameChange(e, 'lname');
   };
 
+  // Specific handler for name fields to validate only letters and spaces
+  const handleNameChange = (e, type) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    const { name, value } = e.target;
+
+    if (regex.test(value)) {
+      setFormData({ ...formData, [name]: value });
+      setNameError({ ...nameError, [type]: '' });
+    } else {
+      setNameError({ ...nameError, [type]: 'Only letters and spaces are allowed' });
+    }
+  };
+
+  // Form validation logic
   const validateForm = () => {
     const newErrors = {};
     if (!formData.fname) {
       newErrors.fname = 'First Name is required';
+    } else if (nameError.fname) {
+      newErrors.fname = nameError.fname;
     }
     if (!formData.lname) {
       newErrors.lname = 'Last Name is required';
+    } else if (nameError.lname) {
+      newErrors.lname = nameError.lname;
     }
     if (!formData.email) {
       newErrors.email = 'Email is required';
@@ -58,28 +81,26 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await axios.post('http://13.201.255.228:8080/registeruserr', formData);
+        const response = await axios.post('http://localhost:8080/registeruserr', formData);
         console.log('User registered successfully:', response.data);
         alert("Register Successfully...");
         navigate('/login');
       } catch (error) {
         console.error('Error adding customer:', error);
         if (error.response) {
-          // Example: Check if email already exists based on error response
           if (error.response.status === 400 && error.response.data.includes('already exists')) {
             setEmailExists(true);
             setErrors({ ...errors, email: 'Email already exists' });
             alert('Email already exists');
           }
         } else if (error.request) {
-          // The request was made but no response was received
           console.error('Request:', error.request);
         } else {
-          // Something happened in setting up the request that triggered an error
           console.error('Error:', error.message);
         }
       }
@@ -88,6 +109,7 @@ const Register = () => {
     }
   };
 
+  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -104,11 +126,11 @@ const Register = () => {
                   <p className="text-body-secondary">Create your account</p>
 
                   <div className="mb-3 input-group">
-                    <span className="input-group-text">@</span>
+                    <span className="input-group-text">E-mail</span>
                     <input
                       type="email"
                       className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                      placeholder="Email"
+                      placeholder="Enter Email"
                       autoComplete="email"
                       name="email"
                       value={formData.email}
@@ -118,37 +140,37 @@ const Register = () => {
                   </div>
 
                   <div className="mb-3 input-group">
-                    <span className="input-group-text">FN</span>
+                    <span className="input-group-text">First Name</span>
                     <input
                       type="text"
-                      className={`form-control ${errors.fname ? 'is-invalid' : ''}`}
-                      placeholder="First Name"
+                      className={`form-control ${errors.fname || nameError.fname ? 'is-invalid' : ''}`}
+                      placeholder="Enter First Name"
                       name="fname"
                       value={formData.fname}
                       onChange={handleChange}
                     />
-                    {errors.fname && <div className="invalid-feedback">{errors.fname}</div>}
+                    {(errors.fname || nameError.fname) && <div className="invalid-feedback">{errors.fname || nameError.fname}</div>}
                   </div>
 
                   <div className="mb-3 input-group">
-                    <span className="input-group-text">LN</span>
+                    <span className="input-group-text">Last Name</span>
                     <input
                       type="text"
-                      className={`form-control ${errors.lname ? 'is-invalid' : ''}`}
-                      placeholder="Last Name"
+                      className={`form-control ${errors.lname || nameError.lname ? 'is-invalid' : ''}`}
+                      placeholder="Enter Last Name"
                       name="lname"
                       value={formData.lname}
                       onChange={handleChange}
                     />
-                    {errors.lname && <div className="invalid-feedback">{errors.lname}</div>}
+                    {(errors.lname || nameError.lname) && <div className="invalid-feedback">{errors.lname || nameError.lname}</div>}
                   </div>
 
                   <div className="mb-3 input-group">
-                    <span className="input-group-text">U</span>
+                    <span className="input-group-text">Username</span>
                     <input
                       type="text"
                       className={`form-control ${errors.username ? 'is-invalid' : ''}`}
-                      placeholder="Username"
+                      placeholder="Enter Username"
                       name="username"
                       value={formData.username}
                       onChange={handleChange}
@@ -157,11 +179,11 @@ const Register = () => {
                   </div>
 
                   <div className="mb-3 input-group">
-                    <span className="input-group-text">#</span>
+                    <span className="input-group-text">MobNumber</span>
                     <input
                       type="text"
                       className={`form-control ${errors.mobno ? 'is-invalid' : ''}`}
-                      placeholder="Mobile Number"
+                      placeholder="Enter Mobile Number"
                       name="mobno"
                       value={formData.mobno}
                       onChange={handleChange}
@@ -170,11 +192,11 @@ const Register = () => {
                   </div>
 
                   <div className="mb-3 input-group">
-                    <span className="input-group-text">*</span>
+                    <span className="input-group-text">Password</span>
                     <input
                       type={showPassword ? 'text' : 'password'}
                       className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                      placeholder="Password"
+                      placeholder="Enter Password"
                       autoComplete="new-password"
                       name="password"
                       value={formData.password}
@@ -191,11 +213,11 @@ const Register = () => {
                   </div>
 
                   <div className="mb-3 input-group">
-                    <span className="input-group-text">*</span>
+                    <span className="input-group-text">Confirm Password</span>
                     <input
                       type={showPassword ? 'text' : 'password'}
                       className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
-                      placeholder="Confirm Password"
+                      placeholder="Enter Confirm Password"
                       autoComplete="new-password"
                       name="confirmPassword"
                       value={formData.confirmPassword}

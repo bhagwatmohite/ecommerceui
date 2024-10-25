@@ -364,7 +364,7 @@
 
 
 
-
+//22.10
 
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -381,6 +381,7 @@ const BuyProducts = () => {
   const { fname, mobno, lname, addresses, id } = useUserr();
   const [percentage, setPercentage] = useState(0);
 
+
   const [showAddAddressModal, setShowAddAddressModal] = useState(false);
   const [newAddress, setNewAddress] = useState({
     address: '',
@@ -396,15 +397,28 @@ const BuyProducts = () => {
   const productId = location.state.productId;
   const size = location.state.size;
   const color = location.state.color;
+  const imageurl = location.state.images;
+  const image = imageurl[0];
+  const price = location.state.prices;
+  const totalQuantity = location.state.totalQuantity
+
+  // eslint-disable-next-line no-unused-vars
+  const [quantity, setQuantity] = useState(totalQuantity || 1);
+
+  // console.log("image", image);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://13.201.255.228:8080/product/${productId}`);
+        const response = await fetch(`http://localhost:8080/product/${productId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }
         const data = await response.json();
+
+        // console.log("products imagesssss", data);
+        // console.log("products selected data", product);
+
         setProduct(data);
       } catch (error) {
         console.error('Error fetching product data:', error);
@@ -417,7 +431,7 @@ const BuyProducts = () => {
   useEffect(() => {
     const fetchCharges = async () => {
       try {
-        const response = await axios.get("http://13.201.255.228:8080/all");
+        const response = await axios.get("http://localhost:8080/all");
         if (response.data.length > 0) {
           const firstCharge = response.data[0];
           setPercentage(firstCharge.percentage);
@@ -433,14 +447,14 @@ const BuyProducts = () => {
 
   const calculateNewSellPrice = (sellprice) => {
     if (!isNaN(parseFloat(percentage))) {
-      const newPrice = parseFloat(sellprice) * (1 + parseFloat(percentage) / 100);
+      const newPrice = parseFloat(sellprice * quantity) * (1 + parseFloat(percentage) / 100);
       return newPrice.toFixed(2);
     }
     return sellprice;
   };
 
   const calculateDiscount = (originalPrice, discountedPrice) => {
-    const discount = ((originalPrice - discountedPrice) / originalPrice) * 100;
+    const discount = ((originalPrice * quantity - discountedPrice * quantity) / originalPrice) * 100;
     return discount.toFixed(0); // Return the discount percentage rounded to the nearest integer
   };
 
@@ -489,7 +503,7 @@ const BuyProducts = () => {
       // Replace with logic to get the logged-in user's ID
       const userId = id; // Replace with actual logged-in user ID retrieval
 
-      const response = await axios.post(`http://13.201.255.228:8080/save/${userId}`, newAddress);
+      const response = await axios.post(`http://localhost:8080/save/${userId}`, newAddress);
       // Assuming the API responds with the added address object
       const addedAddress = response.data;
       // You would typically update the state with the added address
@@ -605,7 +619,7 @@ const BuyProducts = () => {
                     <Card.Body>
                       <Row>
                         <Col md={2}>
-                          <img src={`http://13.201.255.228:8080/uploads/${product.imageUrl}`} alt={product.name} className="img-fluid" />
+                          <img src={`http://localhost:8080/ColorImages/${image}`} alt={product.name} className="img-fluid" />
                         </Col>
                         <Col md={8}>
                           <Card.Title>{product.name}</Card.Title>
@@ -616,7 +630,7 @@ const BuyProducts = () => {
                             Color:{color}
                           </Card.Text>
                           <Card.Text>
-                            <span className="fw-bold">₹{calculateNewSellPrice(product.sellprice)}</span>
+                            <span className="fw-bold">₹{calculateNewSellPrice(product.sellprice || price)}</span>
                             <span className="text-muted ms-2 text-decoration-line-through">₹{product.price}</span>
                             <span className="text-success ms-2">{calculateDiscount(product.price, calculateNewSellPrice(product.sellprice))}% Off</span>
                           </Card.Text>

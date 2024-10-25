@@ -72,7 +72,7 @@ const PersonalInformation = ({ userData }) => {
     // If form is valid, proceed with save/update
     if (formIsValid) {
       try {
-        const response = await axios.put(`http://13.201.255.228:8080/userr/${userData.id}`, editableUserData);
+        const response = await axios.put(`http://localhost:8080/userr/${userData.id}`, editableUserData);
         console.log('Profile updated successfully:', response.data);
         alert("Profile updated successfully");
         // Optionally, you can show a success message or update UI state upon successful update
@@ -84,12 +84,12 @@ const PersonalInformation = ({ userData }) => {
   };
 
   return (
-    <div>
+    <div >
       <h5 className="card-title">Personal Information</h5>
       <form>
         <div className="form-row">
           <div className="form-group col-md-6">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username"><b>Username :</b></label>
             <input
               type="text"
               className="form-control"
@@ -99,7 +99,7 @@ const PersonalInformation = ({ userData }) => {
             />
           </div>
           <div className="form-group col-md-6">
-            <label htmlFor="fname">First Name</label>
+            <label htmlFor="fname"><b>First Name :</b></label>
             <input
               type="text"
               className="form-control"
@@ -110,7 +110,7 @@ const PersonalInformation = ({ userData }) => {
             {errors.fname && <div className="text-danger">{errors.fname}</div>}
           </div>
           <div className="form-group col-md-6">
-            <label htmlFor="lname">Last Name</label>
+            <label htmlFor="lname"> <b>Last Name :</b></label>
             <input
               type="text"
               className="form-control"
@@ -121,7 +121,7 @@ const PersonalInformation = ({ userData }) => {
             {errors.lname && <div className="text-danger">{errors.lname}</div>}
           </div>
           <div className="form-group col-md-6">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email"><b>Email :</b></label>
             <input
               type="email"
               className="form-control"
@@ -132,7 +132,8 @@ const PersonalInformation = ({ userData }) => {
             {errors.email && <div className="text-danger">{errors.email}</div>}
           </div>
           <div className="form-group col-md-6">
-            <label htmlFor="mobno">Mobile Number</label>
+            <label htmlFor="mobno"> <b>Mobile Number :</b></label>
+            <br></br>
             <input
               type="text"
               className="form-control"

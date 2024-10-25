@@ -21,7 +21,7 @@ const AddressInformation = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://13.201.255.228:8080/addresses/user/${id}`);
+        const response = await axios.get(`http://localhost:8080/addresses/user/${id}`);
         setAddresses(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -78,7 +78,7 @@ const AddressInformation = () => {
         return;
       }
 
-      const response = await axios.post(`http://13.201.255.228:8080/save/${id}`, {
+      const response = await axios.post(`http://localhost:8080/save/${id}`, {
         userId: id,
         ...newAddress
       });
@@ -101,7 +101,7 @@ const AddressInformation = () => {
 
   const handleDelete = async (addressId) => {
     try {
-      await axios.delete(`http://13.201.255.228:8080/address/${addressId}`);
+      await axios.delete(`http://localhost/address/${addressId}`);
       const updatedAddresses = addresses.filter(address => address.id !== addressId);
       setAddresses(updatedAddresses);
       alert("Address deleted successfully");
@@ -117,7 +117,7 @@ const AddressInformation = () => {
         return;
       }
 
-      await axios.put(`http://13.201.255.228:8080/address/${selectedAddress.id}`, selectedAddress);
+      await axios.put(`http://localhost/address/${selectedAddress.id}`, selectedAddress);
       const updatedAddresses = addresses.map(addr => addr.id === selectedAddress.id ? selectedAddress : addr);
       setAddresses(updatedAddresses);
       setShowModal(false);

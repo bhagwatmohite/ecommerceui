@@ -19,6 +19,7 @@ const HomeLayout = ({ isLoggedIn, onLogout, totalQuantity, onSearch }) => {
         </div>
         <Footer />
       </div>
+
     </>
   )
 }

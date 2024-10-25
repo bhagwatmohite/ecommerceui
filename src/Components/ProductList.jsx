@@ -62,7 +62,7 @@ const ProductList = ({ searchQuery }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://13.201.255.228:8080/allproduct");
+        const response = await axios.get("http://localhost:8080/allproduct");
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -106,7 +106,7 @@ const ProductList = ({ searchQuery }) => {
         ) : null}
         <Row>
           {filteredProducts && filteredProducts.map(product => (
-            <Col key={product.id} sm={12} md={6} lg={4}>
+            <Col key={product.id} sm={12} md={6} lg={4} style={{ width: '24.33%' }}>
               <ProductCard product={product} />
             </Col>
           ))}

@@ -74,7 +74,7 @@ const CategoryNav = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://13.201.255.228:8080/getallcategory');
+        const response = await fetch('http://localhost:8080/getallcategory');
         if (!response.ok) {
           throw new Error('Failed to fetch categories');
         }

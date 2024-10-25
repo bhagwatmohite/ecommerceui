@@ -71,7 +71,7 @@ const Slider = () => {
   useEffect(() => {
     const fetchSliderImages = async () => {
       try {
-        const response = await axios.get('http://13.201.255.228:8080/allsliderimages');
+        const response = await axios.get('http://localhost:8080/allsliderimages');
         setSliderImages(response.data); // Assuming the API returns an array of image objects
       } catch (error) {
         console.error('Error fetching slider images:', error);
@@ -98,7 +98,7 @@ const Slider = () => {
           }}>
             <img
               className="d-block"
-              src={`http://13.201.255.228:8080/sliderImages/${image.image}`}  // Assuming your API response has a property 'image' for each image
+              src={`http://localhost:8080/sliderImages/${image.image}`}  // Assuming your API response has a property 'image' for each image
               loading='eager'
               alt={`Slide ${index + 1}`}
               style={{
